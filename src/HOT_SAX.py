@@ -27,7 +27,6 @@ class HOTSAX:
         #sub_lists = np.array_split(X, len(X)//window_size) #[X[i:i+window_size] for i in range(0, len(X)), window:size)]
         #dist = [(x - y)**2 for x,y in zip(window1, window2)]
         #np.apply_along_axis(lambda x,y: chr(x[0] + ord('a')), 0, np.expand_dims(S, axis=0))
-
         #print(1, np.expand_dims(X, axis=1))
 
         # compare paa version (only one value for paa_length many entries
