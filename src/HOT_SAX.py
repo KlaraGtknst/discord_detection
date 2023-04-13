@@ -11,16 +11,14 @@ __copyright__ = "Copyright 2023, Intelligent Embedded Systems, Universität Kass
 class HOTSAX:
     """  Implement HOT alternative; HOT-SAX discord discovery algorithm """
 
-    def __init__(self, sax, window_size, number_of_discords):
+    def __init__(self, window_size, number_of_discords):
         ''' Initialize a new discords discovery objection.
 
         Parameters:
         ===========
-        sax - trained sax model
         window_size - number of data points which belong to a frame
         number_of_discords - number of discords to identify
         '''
-        self.sax = sax
         self.window_size = window_size
         self.number_of_discords = number_of_discords
 
