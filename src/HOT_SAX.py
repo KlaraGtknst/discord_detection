@@ -23,7 +23,19 @@ class HOTSAX:
         self.sax = sax
 
     def compare_pairwise(self, window_size, X):
-        '''
+        ''' Calulates the squared euclidean distance between data frames.
+
+        Parameters:
+        ===========
+        window_size - number of data points which belong to a frame
+        X - array containing time series data
+
+        Return:
+        =======
+        list which stores the squared euclidean distance of the frames.
+        An entry is summed result of the squared euclidean distances of the respective entries of two frames.
+        First all combinations of frame distances to the first frame (excluding itself) are stored, then with the next
+        frame (no repetition) etc.
         '''
 
         print(window_size, X)
