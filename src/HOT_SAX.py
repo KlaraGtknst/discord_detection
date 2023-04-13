@@ -52,8 +52,16 @@ class HOTSAX:
             return pdist(X=np.expand_dims(X, axis=1), metric='sqeuclidean')
 
     def smallest_distance_frame(self, X):
-        '''
+        ''' for every frame: finds the minimum distance of entries which measure distance between that certain and another frame
 
+        Parameters:
+        ===========
+        X - array containing time series data
+
+        Return:
+        =======
+        result_value - list containing the minimum distance for every frame
+        result_index - list containing the index in the distances list of the minimum distance for every frame
         '''
         # obtain list containing squared euclidean distances
         distances = self.compare_pairwise(X)
