@@ -26,7 +26,7 @@ if __name__ == "__main__":
         hot_sax = HOTSAX(sax=sax, window_size=2, number_of_discords=1)
 
         # example
-        dat = np.array([-2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
+        dat = np.array([4, -2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
         #sax.fit(X=dat)
         Y = hot_sax.compare_pairwise(X=dat)
 
@@ -44,8 +44,10 @@ if __name__ == "__main__":
 
     # Instantiate the class
     sax = SAX(symbols=4, paa_length=3)
-    hot_sax = HOTSAX(sax=sax, window_size=2, number_of_discords=3)
-    dat = np.array([-2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
+    hot_sax = HOTSAX(sax=sax, window_size=1, number_of_discords=3)
+    dat = np.array([4, -2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
     #sax.fit(X=dat)
-    hot_sax.identify_discord(dat)
+    #hot_sax.identify_discord(dat)
+    result_value, result_index = hot_sax.smallest_distance_frame(X=dat)
+    print(f'result_value: {result_value}\nresult_index: {result_index}')
 

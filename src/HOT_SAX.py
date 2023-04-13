@@ -51,6 +51,37 @@ class HOTSAX:
             # squared euclidean distance between entries
             return pdist(X=np.expand_dims(X, axis=1), metric='sqeuclidean')
 
+    def smallest_distance_frame(self, X):
+        '''
+
+        '''
+        # obtain list containing squared euclidean distances
+        distances = self.compare_pairwise(X)
+        print(distances)
+
+        # prepare result list containing minimum distance for every frame
+        result_index = []
+        result_value = []
+
+        # store smallest distance to another frame for every frame
+        for frame in range(0, len(X)//self.window_size):
+            # indices where distances between certain frame and others is stored
+            start = max(frame * len(X) - sum(range(frame + 1)), 0)
+            end = start + (len(X) - (frame + 1))
+            own_indices = np.arange(start, end, 1)
+            other_indices = np.array([(len(X) * i - sum(range(i + 1)) + frame - (i + 1)) for i in range(0, frame)])
+            # other_indices is empty for frame==0; concatenating [] with own_indices causes indices type to be float
+            # to avoid error caused by trying to index using floats, concatenating only happens for indices bigger than 0
+            indices = np.concatenate((own_indices, other_indices)) if frame > 0 else own_indices
+
+            # index of minimum distance value of certain frame
+            # argmin returns index of minimum of sublist of distances, which is index of indices list equivalent containing all distances of that certain frame
+            minimum = indices[np.argmin(distances[indices])]
+            result_index.append(minimum)
+            result_value.append(distances[minimum])
+
+        return result_value, result_index
+
     def identify_discord(self, X):
         '''
 
