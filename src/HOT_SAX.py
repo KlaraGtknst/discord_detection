@@ -65,7 +65,6 @@ class HOTSAX:
         '''
         # obtain list containing squared euclidean distances
         distances = self.compare_pairwise(X)
-        print(distances)
 
         # prepare result list containing minimum distance for every frame
         result_index = []
