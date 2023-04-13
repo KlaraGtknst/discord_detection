@@ -11,21 +11,24 @@ __copyright__ = "Copyright 2023, Intelligent Embedded Systems, Universität Kass
 class HOTSAX:
     """  Implement HOT alternative; HOT-SAX discord discovery algorithm """
 
-    def __init__(self, sax):
+    def __init__(self, sax, window_size, number_of_discords):
         ''' Initialize a new discords discovery objection.
 
         Parameters:
         ===========
         sax - trained sax model
+        window_size - number of data points which belong to a frame
+        number_of_discords - number of discords to identify
         '''
         self.sax = sax
+        self.window_size = window_size
+        self.number_of_discords = number_of_discords
 
-    def compare_pairwise(self, window_size, X):
+    def compare_pairwise(self, X):
         ''' Calulates the squared euclidean distance between data frames.
 
         Parameters:
         ===========
-        window_size - number of data points which belong to a frame
         X - array containing time series data
 
         Return:
@@ -35,15 +38,31 @@ class HOTSAX:
         First all combinations of frame distances to the first frame (excluding itself) are stored, then with the next
         frame (no repetition) etc.
         '''
-        if (window_size != 1) and (window_size < len(X)):
+        if (self.window_size != 1) and (self.window_size < len(X)):
             # windows entries contain data points, which belong to the same window
-            windows = np.array_split(X, len(X)//window_size)
+            windows = np.array_split(X, len(X)//self.window_size)
 
             # frames between which the squared euclidean distance will be calculated
             combis = list(combinations(np.arange(0, len(windows), 1), 2))
 
             # sum up squared euclidean distance per respective entry of two windows
-            return [[sum((x[0] - x[1]) ** 2 for x in zip(windows[window1], windows[window2]))] for window1, window2 in combis]
+            return np.array([[sum((x[0] - x[1]) ** 2 for x in zip(windows[window1], windows[window2]))] for window1, window2 in combis]).flatten()
         else:
             # squared euclidean distance between entries
             return pdist(X=np.expand_dims(X, axis=1), metric='sqeuclidean')
+
+    def identify_discord(self, X):
+        '''
+
+        '''
+        # obtain list containing squared euclidean distances
+        distances = self.compare_pairwise(X)
+        print(distances)
+
+        # find index i of the greatest n values in list containing squared euclidean distances
+        # first index corresponds to the largest distance
+        sorted_distances_indices = np.argsort(distances)[- self.number_of_discords:]
+        i = np.flip(sorted_distances_indices[- self.number_of_discords:])
+        print(i)
+
+        # return list of frames which correspond to i

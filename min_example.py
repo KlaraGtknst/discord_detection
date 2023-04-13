@@ -23,21 +23,29 @@ if __name__ == "__main__":
     def try_HOT_SAX():
         # Instantiate the class
         sax = SAX(symbols=4, paa_length=3)
-        hot_sax = HOTSAX(sax=sax)
+        hot_sax = HOTSAX(sax=sax, window_size=2, number_of_discords=1)
 
         # example
         dat = np.array([-2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
-        sax.fit(X=dat)
-        Y = hot_sax.compare_pairwise(window_size=2, X=dat)
+        #sax.fit(X=dat)
+        Y = hot_sax.compare_pairwise(X=dat)
 
         print('solution with window size 2:', Y)
 
-        Y = hot_sax.compare_pairwise(window_size=1, X=dat)
+        hot_sax = HOTSAX(sax=sax, window_size=1, number_of_discords=1)
+        Y = hot_sax.compare_pairwise(X=dat)
 
         print('solution with window size 1:', Y)
 
 
     # test code (calling functions)
-    try_SAX()
-    try_HOT_SAX()
+    #try_SAX()
+    #try_HOT_SAX()
+
+    # Instantiate the class
+    sax = SAX(symbols=4, paa_length=3)
+    hot_sax = HOTSAX(sax=sax, window_size=2, number_of_discords=3)
+    dat = np.array([-2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
+    #sax.fit(X=dat)
+    hot_sax.identify_discord(dat)
 
