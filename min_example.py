@@ -44,10 +44,19 @@ if __name__ == "__main__":
         result_value, result_index = hot_sax.smallest_distance_frame(X=dat)
         print(f'result_value: {result_value}\nresult_index: {result_index}')
 
+    def try_identifying_discords():
+        # Instantiate the class
+        hot_sax = HOTSAX( window_size=1, number_of_discords=3)
+        dat = np.array([5, -2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
+
+        discords, result_value_indices = hot_sax.identify_discord(X=dat)
+        print(f'discords: {discords}\nresult_value_indices: {result_value_indices}')
+
     # test code (calling functions)
-    try_SAX()
-    try_HOT_SAX()
-    try_smallest_dist()
+    #try_SAX()
+    #try_HOT_SAX()
+    #try_smallest_dist()
+    try_identifying_discords()
 
 
 

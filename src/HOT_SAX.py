@@ -88,17 +88,28 @@ class HOTSAX:
         return result_value, result_index
 
     def identify_discord(self, X):
+        ''' identifies discords (frames which have the greatest smallest distances to other frames).
+
+        Parameters:
+        ===========
+        X - array containing time series data
+
+        Return:
+        =======
+        discords - list containing frames, with the greatest smallest distances to other frames
+        result_value_indices - list containing the index in the list of frames (the windows), which are discords
         '''
+        # obtain lists containing smallest squared euclidean distance for every frame and the respective index (in the list of all distances)
+        result_value, result_index = self.smallest_distance_frame(X)
 
-        '''
-        # obtain list containing squared euclidean distances
-        distances = self.compare_pairwise(X)
-        print(distances)
+        # find index of the greatest n values in list containing minimum squared euclidean distances
+        # indices of greatest values -> directly identify discords, bc index correspond to frames with greatest smallest distances
+        result_value_indices = np.argsort(result_value)[- self.number_of_discords:]
 
-        # find index i of the greatest n values in list containing squared euclidean distances
-        # first index corresponds to the largest distance
-        sorted_distances_indices = np.argsort(distances)[- self.number_of_discords:]
-        i = np.flip(sorted_distances_indices[- self.number_of_discords:])
-        print(i)
+        # return list of frames which correspond to indices
+        windows = np.array_split(X, len(X)//self.window_size)
+        discords = [windows[j] for j in result_value_indices]
 
-        # return list of frames which correspond to i
+        return discords, result_value_indices
+
+
