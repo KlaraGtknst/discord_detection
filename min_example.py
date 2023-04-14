@@ -46,11 +46,13 @@ if __name__ == "__main__":
 
     def try_identifying_discords():
         # Instantiate the class
-        hot_sax = HOTSAX( window_size=1, number_of_discords=3)
         dat = np.array([5, -2, 0, 2, 0, -1, 3, 0, 0, 2, -1, 1, 2])
 
-        discords, result_value_indices = hot_sax.identify_discord(X=dat)
-        print(f'discords: {discords}\nresult_value_indices: {result_value_indices}')
+        for window_size in range(1, len(dat) + 2):
+            hot_sax = HOTSAX(window_size=window_size, number_of_discords=3)
+
+            discords, result_value_indices = hot_sax.identify_discord(X=dat)
+            print(f'window size: {window_size}\ndiscords: {discords}\nresult_value_indices: {result_value_indices}\n\n')
 
     # test code (calling functions)
     #try_SAX()

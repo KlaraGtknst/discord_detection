@@ -4,6 +4,7 @@
 import numpy as np
 from scipy.spatial.distance import pdist
 from itertools import combinations
+import math
 
 __author__ = "Klara Gutekunst"
 __copyright__ = "Copyright 2023, Intelligent Embedded Systems, Universität Kassel/Finanzamt Kassel"
@@ -38,7 +39,7 @@ class HOTSAX:
         '''
         if (self.window_size != 1) and (self.window_size < len(X)):
             # windows entries contain data points, which belong to the same window
-            windows = np.array_split(X, len(X)//self.window_size)
+            windows = np.array_split(X, math.ceil(len(X)/self.window_size))
 
             # frames between which the squared euclidean distance will be calculated
             combis = list(combinations(np.arange(0, len(windows), 1), 2))
@@ -68,24 +69,28 @@ class HOTSAX:
         result_index = []
         result_value = []
 
-        # store smallest distance to another frame for every frame
-        for frame in range(0, len(X)//self.window_size):
-            # indices where distances between certain frame and others is stored
-            start = max(frame * len(X) - sum(range(frame + 1)), 0)
-            end = start + (len(X) - (frame + 1))
-            own_indices = np.arange(start, end, 1)
-            other_indices = np.array([(len(X) * i - sum(range(i + 1)) + frame - (i + 1)) for i in range(0, frame)])
-            # other_indices is empty for frame==0; concatenating [] with own_indices causes indices type to be float
-            # to avoid error caused by trying to index using floats, concatenating only happens for indices bigger than 0
-            indices = np.concatenate((own_indices, other_indices)) if frame > 0 else own_indices
+        try:
+            # store smallest distance to another frame for every frame
+            for frame in range(0, math.ceil(len(X)/self.window_size)):
+                # indices where distances between certain frame and others is stored
+                start = max(frame * math.ceil(len(X)/self.window_size) - sum(range(frame + 1)), 0)
+                end = start + (math.ceil(len(X)/self.window_size) - (frame + 1))
+                own_indices = np.arange(start, end, 1)
+                other_indices = np.array([((math.ceil(len(X)/self.window_size)) * i - sum(range(i + 1)) + frame - (i + 1)) for i in range(0, frame)])
+                # other_indices is empty for frame==0; concatenating [] with own_indices causes indices type to be float
+                # to avoid error caused by trying to index using floats, concatenating only happens for indices bigger than 0
+                indices = np.concatenate((own_indices, other_indices)) if frame > 0 else own_indices
 
-            # index of minimum distance value of certain frame
-            # argmin returns index of minimum of sublist of distances, which is index of indices list equivalent containing all distances of that certain frame
-            minimum = indices[np.argmin(distances[indices])]
-            result_index.append(minimum)
-            result_value.append(distances[minimum])
+                # index of minimum distance value of certain frame
+                # argmin returns index of minimum of sublist of distances, which is index of indices list equivalent containing all distances of that certain frame
+                minimum = indices[np.argmin(distances[indices])]
+                result_index.append(minimum)
+                result_value.append(distances[minimum])
 
-        return result_value, result_index
+            return result_value, result_index
+        except ValueError:
+            # window size possibly bigger than data X
+            return [], []
 
     def identify_discord(self, X):
         ''' identifies discords (frames which have the greatest smallest distances to other frames).
@@ -104,10 +109,11 @@ class HOTSAX:
 
         # find index of the greatest n values in list containing minimum squared euclidean distances
         # indices of greatest values -> directly identify discords, bc index correspond to frames with greatest smallest distances
-        result_value_indices = np.argsort(result_value)[- self.number_of_discords:]
+        num_discords = min(self.number_of_discords, math.ceil(len(X)/self.window_size))
+        result_value_indices = np.argsort(result_value)[- num_discords:]
 
         # return list of frames which correspond to indices
-        windows = np.array_split(X, len(X)//self.window_size)
+        windows = np.array_split(X, math.ceil(len(X)/self.window_size))
         discords = [windows[j] for j in result_value_indices]
 
         return discords, result_value_indices
